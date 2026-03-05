@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🧶 Agulha e Linha</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Nunito:wght@300;400;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --rose:    #FF69B4;
+      --deep:    #C81255;
+      --blush:   #FFD6E8;
+      --petal:   #FFF0F7;
+      --magenta: #FF1493;
+      --cream:   #FFF8FC;
+      --dark:    #2d1a24;
+      --shadow:  rgba(200, 18, 85, 0.15);
+      --wa:      #25D366;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--cream);
+      color: var(--dark);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── PETALS ── */
+    .petals { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+    .petal  { position: absolute; opacity: 0.12; animation: fall linear infinite; }
+    @keyframes fall {
+      0%   { transform: translateY(-60px) rotate(0deg); opacity: 0; }
+      10%  { opacity: 0.18; }
+      90%  { opacity: 0.1; }
+      100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+    }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative; z-index: 1;
+      background: linear-gradient(160deg, #FD9AEB 0%, #9d12c8 45%, #B70490 75%, #DD55C4 100%);
+      padding: 0 0 60px;
+      overflow: hidden;
+    }
+    .hero::after {
+      content: '';
+      position: absolute; bottom: -2px; left: 0; right: 0; height: 60px;
+      background: var(--cream);
+      clip-path: ellipse(55% 100% at 50% 100%);
+    }
+
+    .topbar {
+      display: flex; align-items: center; justify-content: flex-end;
+      padding: 14px 32px;
+      border-bottom: 1px solid rgba(255,255,255,0.15);
+    }
+    .admin-link {
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.78rem; font-weight: 800;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: rgba(255,255,255,0.75);
+      text-decoration: none;
+      padding: 7px 16px;
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 20px;
+      transition: all 0.2s;
+      backdrop-filter: blur(6px);
+      background: rgba(255,255,255,0.08);
+    }
+    .admin-link:hover { color: white; background: rgba(255,255,255,0.18); }
+
+    .hero-center {
+      display: flex; flex-direction: column; align-items: center; text-align: center;
+      padding: 40px 20px 20px;
+    }
+    .hero-logo-ring {
+      width: 160px; height: 160px; border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.5);
+      padding: 4px;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2), 0 0 0 8px rgba(255,255,255,0.08);
+      margin-bottom: 40px;
+      animation: heroLogo 0.8s cubic-bezier(0.22,1,0.36,1) both;
+      transition: transform 0.4s ease;
+    }
+    .hero-logo-ring:hover { transform: scale(1.05) rotate(4deg); }
+    @keyframes heroLogo { from{opacity:0;transform:scale(0.7);} to{opacity:1;transform:scale(1);} }
+    .hero-logo-ring img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: block; }
+
+    .hero h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.2rem, 5vw, 3.5rem);
+      font-weight: 600; color: white;
+      letter-spacing: 0.03em;
+      text-shadow: 0 2px 20px rgba(0,0,0,0.2);
+      animation: heroText 0.8s 0.15s cubic-bezier(0.22,1,0.36,1) both;
+    }
+    .hero-tagline {
+      font-size: clamp(0.88rem, 2vw, 1.05rem);
+      color: rgba(255,255,255,0.85);
+      font-weight: 400; font-style: italic;
+      font-family: 'Cormorant Garamond', serif;
+      margin-top: 8px;
+      animation: heroText 0.8s 0.25s cubic-bezier(0.22,1,0.36,1) both;
+    }
+    .hero-flowers {
+      margin-top: 14px; font-size: 1.5rem; letter-spacing: 6px;
+      animation: heroText 0.8s 0.35s cubic-bezier(0.22,1,0.36,1) both;
+    }
+    @keyframes heroText { from{opacity:0;transform:translateY(16px);} to{opacity:1;transform:translateY(0);} }
+
+    /* ── ABOUT ── */
+    .about {
+      position: relative; z-index: 1;
+      max-width: 700px; margin: 0 auto;
+      padding: 48px 24px 16px;
+      text-align: center;
+    }
+    .about p {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1rem, 2.2vw, 1.2rem);
+      color: var(--deep); line-height: 1.8; font-weight: 400;
+    }
+
+    /* ── SERVICES ── */
+    .services {
+      position: relative; z-index: 1;
+      max-width: 900px; margin: 40px auto;
+      padding: 0 24px;
+    }
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-weight: 600; color: var(--deep);
+      text-align: center; margin-bottom: 24px; letter-spacing: 0.03em;
+    }
+    .section-title::after {
+      content: '';
+      display: block; width: 60px; height: 3px;
+      background: linear-gradient(90deg, var(--rose), var(--magenta));
+      border-radius: 2px; margin: 10px auto 0;
+    }
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 12px;
+    }
+    .service-card {
+      background: white; border: 2px solid var(--blush);
+      border-radius: 18px; padding: 20px 12px;
+      text-align: center;
+      transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+      cursor: default;
+    }
+    .service-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px var(--shadow);
+      border-color: var(--rose);
+    }
+    .service-card .emoji { font-size: 2rem; display: block; margin-bottom: 8px; }
+    .service-card p { font-size: 0.78rem; font-weight: 700; color: var(--deep); line-height: 1.3; }
+
+    /* ── CATALOG ── */
+    .catalog-section {
+      position: relative; z-index: 1;
+      max-width: 1200px; margin: 20px auto 0;
+      padding: 0 24px 60px;
+    }
+    .catalog-header {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 16px; margin-bottom: 32px;
+    }
+    .filter-bar { display: flex; gap: 8px; flex-wrap: wrap; }
+    .filter-pill {
+      background: white; border: 2px solid var(--blush);
+      color: var(--deep);
+      font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 0.75rem;
+      padding: 7px 16px; border-radius: 20px;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .filter-pill:hover, .filter-pill.active {
+      background: linear-gradient(135deg, var(--rose), var(--magenta));
+      color: white; border-color: transparent;
+      box-shadow: 0 4px 12px rgba(255,20,147,0.3);
+    }
+
+    /* Product grid */
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 24px;
+    }
+    .product-card {
+      background: white; border-radius: 24px; border: 2px solid var(--blush);
+      overflow: hidden; box-shadow: 0 4px 20px var(--shadow);
+      transition: transform 0.3s, box-shadow 0.3s;
+      display: flex; flex-direction: column;
+      animation: cardFadeIn 0.5s ease both;
+    }
+    .product-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 16px 40px rgba(200,18,85,0.2);
+    }
+    @keyframes cardFadeIn { from{opacity:0;transform:translateY(20px);} to{opacity:1;transform:translateY(0);} }
+
+    /* ── IMAGE WRAPPER — with zoom hint ── */
+    .product-img-wrap {
+      position: relative; width: 100%; height: 220px;
+      overflow: hidden; background: var(--petal);
+      cursor: zoom-in;
+    }
+    .product-img-wrap img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+      display: block;
+    }
+    .product-card:hover .product-img-wrap img { transform: scale(1.06); }
+
+    /* zoom overlay hint */
+    .zoom-hint {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(200, 18, 85, 0);
+      transition: background 0.3s;
+      pointer-events: none;
+    }
+    .zoom-hint-icon {
+      width: 52px; height: 52px;
+      background: rgba(255,255,255,0.95);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 20px rgba(200,18,85,0.4);
+      opacity: 0;
+      transform: scale(0.7);
+      transition: opacity 0.3s, transform 0.3s;
+    }
+    .zoom-hint-icon svg { width: 24px; height: 24px; }
+    .product-img-wrap:hover .zoom-hint { background: rgba(200, 18, 85, 0.12); }
+    .product-img-wrap:hover .zoom-hint-icon {
+      opacity: 1; transform: scale(1);
+    }
+
+    .product-badge {
+      position: absolute; top: 12px; left: 12px;
+      background: linear-gradient(135deg, var(--rose), var(--magenta));
+      color: white; font-size: 0.65rem; font-weight: 900;
+      padding: 4px 10px; border-radius: 20px;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      pointer-events: none;
+    }
+    .product-discount {
+      position: absolute; top: 12px; right: 12px;
+      background: var(--deep); color: white;
+      font-size: 0.72rem; font-weight: 900;
+      padding: 4px 10px; border-radius: 20px;
+      pointer-events: none;
+    }
+    .product-no-img {
+      width: 100%; height: 100%;
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; color: #c8a0b8;
+      font-size: 0.8rem; font-weight: 700; gap: 6px;
+      cursor: default;
+    }
+    .product-no-img span { font-size: 3rem; }
+
+    .product-body {
+      padding: 18px 18px 14px; flex: 1; display: flex; flex-direction: column;
+    }
+    .product-category {
+      font-size: 0.65rem; font-weight: 800; color: var(--rose);
+      text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 6px;
+    }
+    .product-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.15rem; font-weight: 600; color: var(--dark);
+      line-height: 1.35; margin-bottom: 10px; flex: 1;
+    }
+    .product-obs {
+      font-size: 0.78rem; color: #b08090; font-weight: 600;
+      line-height: 1.4; margin-bottom: 10px;
+      display: -webkit-box; -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .product-pricing {
+      display: flex; align-items: baseline; gap: 8px; margin-bottom: 14px;
+    }
+    .product-price-old {
+      font-size: 0.78rem; color: #c8a0b8;
+      text-decoration: line-through; font-weight: 600;
+    }
+    .product-price-new { font-size: 1.45rem; font-weight: 900; color: var(--deep); }
+
+    .btn-whatsapp {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%;
+      background: linear-gradient(135deg, #25D366, #128C7E);
+      color: white; border: none; border-radius: 14px;
+      padding: 13px 16px;
+      font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 0.9rem;
+      cursor: pointer; text-decoration: none;
+      box-shadow: 0 4px 16px rgba(37,211,102,0.35);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-whatsapp:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(37,211,102,0.5);
+    }
+    .btn-whatsapp:active { transform: scale(0.98); }
+    .btn-whatsapp svg { flex-shrink: 0; }
+
+    /* Empty state */
+    .catalog-empty {
+      grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: #c8a0b8;
+    }
+    .catalog-empty-icon { font-size: 4rem; margin-bottom: 12px; }
+    .catalog-empty h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; color: var(--deep); margin-bottom: 6px; }
+    .catalog-empty p { font-size: 0.88rem; }
+
+    /* Skeleton */
+    .skeleton-card { background: white; border-radius: 24px; border: 2px solid var(--blush); overflow: hidden; }
+    .skel-img  { height: 220px; background: linear-gradient(90deg, var(--petal) 25%, var(--blush) 50%, var(--petal) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
+    .skel-body { padding: 18px; display: flex; flex-direction: column; gap: 10px; }
+    .skel-line { height: 12px; border-radius: 6px; background: linear-gradient(90deg, var(--petal) 25%, var(--blush) 50%, var(--petal) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
+    .skel-line.short { width: 50%; }
+    .skel-line.tall  { height: 20px; width: 70%; }
+    .skel-btn  { height: 46px; border-radius: 14px; margin-top: 8px; background: linear-gradient(90deg, var(--petal) 25%, var(--blush) 50%, var(--petal) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
+    @keyframes shimmer { 0%{background-position:200% 0;} 100%{background-position:-200% 0;} }
+
+    .lightbox-overlay {
+      position: fixed; inset: 0; z-index: 9999;
+      background: rgba(30, 8, 20, 0.92);
+      backdrop-filter: blur(12px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .lightbox-overlay.open {
+      opacity: 1; pointer-events: all;
+    }
+
+    .lightbox-box {
+      position: relative;
+      max-width: 92vw; max-height: 92vh;
+      display: flex; flex-direction: column;
+      align-items: center;
+      transform: scale(0.88);
+      transition: transform 0.35s cubic-bezier(0.22,1,0.36,1);
+    }
+    .lightbox-overlay.open .lightbox-box { transform: scale(1); }
+
+    /* main image area */
+    .lightbox-img-area {
+      position: relative;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.6), 0 0 0 3px rgba(255,105,180,0.35);
+      max-height: 72vh;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--dark);
+    }
+    .lightbox-img-area img {
+      display: block;
+      max-width: 88vw;
+      max-height: 72vh;
+      width: auto; height: auto;
+      object-fit: contain;
+      border-radius: 24px;
+      transition: opacity 0.2s;
+    }
+
+    /* decorative corner accents */
+    .lightbox-img-area::before,
+    .lightbox-img-area::after {
+      content: '';
+      position: absolute;
+      width: 50px; height: 50px;
+      border-color: var(--rose);
+      border-style: solid;
+      border-radius: 4px;
+      opacity: 0.6;
+      pointer-events: none;
+    }
+    .lightbox-img-area::before {
+      top: 12px; left: 12px;
+      border-width: 3px 0 0 3px;
+    }
+    .lightbox-img-area::after {
+      bottom: 12px; right: 12px;
+      border-width: 0 3px 3px 0;
+    }
+
+    /* info bar below image */
+    .lightbox-info {
+      margin-top: 20px;
+      text-align: center;
+      color: white;
+      max-width: 500px;
+      padding: 0 10px;
+    }
+    .lightbox-info .lb-category {
+      font-size: 0.7rem; font-weight: 800; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--rose); margin-bottom: 6px;
+    }
+    .lightbox-info .lb-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.2rem, 3vw, 1.7rem);
+      font-weight: 600; line-height: 1.3;
+      color: white; margin-bottom: 6px;
+    }
+    .lightbox-info .lb-obs {
+      font-size: 0.82rem; color: rgba(255,255,255,0.65);
+      line-height: 1.5; margin-bottom: 12px;
+    }
+    .lightbox-info .lb-price {
+      font-size: 1.6rem; font-weight: 900; color: var(--blush);
+    }
+    .lightbox-info .lb-price-old {
+      font-size: 0.85rem; color: rgba(255,255,255,0.4);
+      text-decoration: line-through; margin-right: 8px;
+    }
+
+    /* action buttons row */
+    .lightbox-actions {
+      display: flex; gap: 12px; margin-top: 18px; flex-wrap: wrap; justify-content: center;
+    }
+    .lb-btn-wa {
+      display: flex; align-items: center; gap: 8px;
+      background: linear-gradient(135deg, #25D366, #128C7E);
+      color: white; border: none; border-radius: 14px;
+      padding: 13px 24px;
+      font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 0.92rem;
+      cursor: pointer; text-decoration: none;
+      box-shadow: 0 4px 16px rgba(37,211,102,0.4);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .lb-btn-wa:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(37,211,102,0.55); }
+    .lb-btn-close-bottom {
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(255,255,255,0.12);
+      color: rgba(255,255,255,0.8);
+      border: 2px solid rgba(255,255,255,0.2);
+      border-radius: 14px; padding: 13px 24px;
+      font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 0.92rem;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .lb-btn-close-bottom:hover { background: rgba(255,255,255,0.22); color: white; }
+
+    /* X close button (top-right) */
+    .lightbox-close {
+      position: absolute; top: -14px; right: -14px;
+      width: 40px; height: 40px;
+      background: linear-gradient(135deg, var(--rose), var(--magenta));
+      border: none; border-radius: 50%;
+      color: white; font-size: 1.1rem;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(255,20,147,0.5);
+      transition: transform 0.2s, box-shadow 0.2s;
+      z-index: 10;
+    }
+    .lightbox-close:hover { transform: scale(1.15) rotate(90deg); box-shadow: 0 6px 20px rgba(255,20,147,0.6); }
+
+    /* nav arrows */
+    .lb-arrow {
+      position: fixed;
+      top: 50%; transform: translateY(-50%);
+      width: 50px; height: 50px;
+      background: rgba(255,255,255,0.12);
+      border: 2px solid rgba(255,255,255,0.25);
+      border-radius: 50%; color: white; font-size: 1.4rem;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; z-index: 10001;
+      transition: background 0.2s, transform 0.2s;
+      backdrop-filter: blur(4px);
+    }
+    .lb-arrow:hover { background: rgba(255,105,180,0.35); transform: translateY(-50%) scale(1.1); }
+    .lb-arrow.prev { left: 16px; }
+    .lb-arrow.next { right: 16px; }
+    @media (max-width: 480px) {
+      .lb-arrow { width: 38px; height: 38px; font-size: 1.1rem; }
+      .lb-arrow.prev { left: 6px; }
+      .lb-arrow.next { right: 6px; }
+    }
+
+    /* counter */
+    .lb-counter {
+      position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 20px; padding: 5px 14px;
+      font-size: 0.75rem; font-weight: 700;
+      color: rgba(255,255,255,0.75);
+      z-index: 10001;
+      backdrop-filter: blur(6px);
+    }
+
+    /* ── SOCIAL ── */
+    .social-section {
+      position: relative; z-index: 1;
+      background: linear-gradient(135deg, #FD9AEB 0%, #C81255 50%, #B70490 100%);
+      padding: 60px 24px; text-align: center;
+    }
+    .social-section .section-title { color: rgba(255, 255, 255, 0); }
+    .social-section .section-title::after { background: rgba(255,255,255,0.5); }
+    .social-flowers { font-size: 1.3rem; letter-spacing: 5px; margin-bottom: 28px; opacity: 0.8; }
+    .social-links { display: flex; align-items: center; justify-content: center; gap: 20px; flex-wrap: wrap; }
+    .social-icon {
+      width: 58px; height: 58px; background: rgba(255,255,255,0.18);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      border: 2px solid rgba(255,255,255,0.35);
+      transition: transform 0.25s, background 0.25s, box-shadow 0.25s;
+      backdrop-filter: blur(6px);
+    }
+    .social-icon:hover {
+      transform: translateY(-4px) scale(1.1);
+      background: rgba(255,255,255,0.3);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    }
+    .social-icon img { width: 30px; height: 30px; object-fit: contain; }
+
+    /* ── FOOTER ── */
+    footer {
+      position: relative; z-index: 1;
+      background: var(--dark); color: rgba(255,255,255,0.55);
+      text-align: center; padding: 28px 24px;
+      font-size: 0.78rem; font-weight: 600; line-height: 2;
+    }
+    footer span { color: var(--rose); }
+
+    /* ── FLOATING WA ── */
+    .floating-wa {
+      position: fixed; bottom: 28px; right: 28px; z-index: 100;
+      width: 58px; height: 58px;
+      background: linear-gradient(135deg, #25D366, #128C7E);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 6px 24px rgba(37,211,102,0.5);
+      text-decoration: none;
+      animation: floatPop 0.6s 1s cubic-bezier(0.22,1,0.36,1) both;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .floating-wa:hover { transform: scale(1.1); box-shadow: 0 10px 32px rgba(37,211,102,0.6); }
+    @keyframes floatPop { from{opacity:0;transform:scale(0);} to{opacity:1;transform:scale(1);} }
+    .floating-wa svg { width: 28px; height: 28px; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 600px) {
+      .topbar { padding: 12px 20px; }
+      .catalog-section { padding: 0 16px 40px; }
+      .products-grid { grid-template-columns: 1fr 1fr; gap: 14px; }
+      .product-img-wrap { height: 160px; }
+      .product-name { font-size: 1rem; }
+      .product-price-new { font-size: 1.2rem; }
+    }
+    @media (max-width: 400px) { .products-grid { grid-template-columns: 1fr; } }
+
+    h5 {
+      font-size: 0.8rem;
+      font-family: 'Times New Roman', Times, serif;
+      color: #f7c6f0; text-align: end;
+    }
+  </style>
+</head>
+<body>
+
+<!-- PETALS -->
+<div class="petals" id="petals"></div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox-overlay" id="lightbox" role="dialog" aria-modal="true" aria-label="Visualização ampliada do produto">
+  <button class="lb-arrow prev" id="lbPrev" aria-label="Anterior">&#8592;</button>
+  <button class="lb-arrow next" id="lbNext" aria-label="Próximo">&#8594;</button>
+  <div class="lb-counter" id="lbCounter">1 / 1</div>
+
+  <div class="lightbox-box">
+    <button class="lightbox-close" id="lbClose" aria-label="Fechar">&#x2715;</button>
+
+    <div class="lightbox-img-area">
+      <img id="lbImg" src="" alt="" />
+    </div>
+
+    <div class="lightbox-info">
+      <div class="lb-category" id="lbCategory"></div>
+      <div class="lb-name" id="lbName"></div>
+      <div class="lb-obs" id="lbObs"></div>
+      <div>
+        <span class="lb-price-old" id="lbPriceOld"></span>
+        <span class="lb-price" id="lbPrice"></span>
+      </div>
+    </div>
+
+    <div class="lightbox-actions">
+      <a class="lb-btn-wa" id="lbWaLink" href="#" target="_blank" rel="noopener">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+        </svg>
+        Quero esse! Chamar no WhatsApp
+      </a>
+      <button class="lb-btn-close-bottom" id="lbCloseBottom">✕ Fechar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── HERO ── -->
+<header class="hero">
+  <div class="topbar">
+    <a href="login.html" class="admin-link">🔐 Área Administrativa</a>
+    <p></p>
+    <h5>Fale conosco: (82) 99673-3252</h5>
+  </div>
+  <div class="hero-center">
+    <div class="hero-logo-ring">
+      <img src="https://raw.githubusercontent.com/Williamsrvs/agulha_linha_catalogo/refs/heads/main/logo.jpg"
+          alt="Logo Agulha e Linha"
+          onerror="this.src='https://placehold.co/120x120/FFD6E8/C81255?text=🌸'" />
+    </div>
+    <h1>Agulha e Linha</h1>
+    <p class="hero-tagline">Delicadeza, amor e encanto em cada detalhe</p>
+    <div class="hero-flowers">🧵 🧶 🧵 🧶 🧵</div>
+  </div>
+</header>
+
+<!-- ── ABOUT ── -->
+<section class="about">
+  <p>Aqui você encontra os melhores produtos de costura e artesanato. Explore nosso catálogo e faça seus pedidos com facilidade!</p>
+</section>
+
+
+<!-- ── CATALOG ── -->
+<section class="catalog-section">
+  <div class="catalog-header">
+    <h2 class="section-title" style="margin-bottom:0;">Nosso Catálogo</h2>
+    <div class="filter-bar" id="filterBar">
+      <button class="filter-pill active" data-cat="todos">🧵 Todos</button>
+    </div>
+  </div>
+  <div class="products-grid" id="productsGrid">
+    <div class="skeleton-card"><div class="skel-img"></div><div class="skel-body"><div class="skel-line short"></div><div class="skel-line tall"></div><div class="skel-line"></div><div class="skel-btn"></div></div></div>
+    <div class="skeleton-card"><div class="skel-img"></div><div class="skel-body"><div class="skel-line short"></div><div class="skel-line tall"></div><div class="skel-line"></div><div class="skel-btn"></div></div></div>
+    <div class="skeleton-card"><div class="skel-img"></div><div class="skel-body"><div class="skel-line short"></div><div class="skel-line tall"></div><div class="skel-line"></div><div class="skel-btn"></div></div></div>
+  </div>
+</section>
+
+<!-- ── SOCIAL ── -->
+<section class="social-section">
+  <h2 class="section-title">Nos Siga nas Redes Sociais</h2>
+  <div class="social-flowers">🧵🧵🧵🧵🧵</div>
+  <div class="social-links">
+    <a href="https://wa.me/5582996733252?text=Olá%2C%20tudo%20bem!%20Gostaria%20de%20saber%20quais%20as%20novidades%20que%20vocês%20têm%20no%20momento." class="social-icon" title="WhatsApp" target="_blank" rel="noopener">
+      <img src="https://raw.githubusercontent.com/Williamsrvs/img_encantosdoluar/refs/heads/main/whatsapp.png" alt="WhatsApp" />
+    </a>
+    <a href="https://www.instagram.com/agulhaelinha_mcz/" class="social-icon" title="Instagram" target="_blank" rel="noopener">
+      <img src="https://raw.githubusercontent.com/Williamsrvs/img_encantosdoluar/refs/heads/main/instagram.png" alt="Instagram" />
+    </a>
+    <a href="https://www.google.com/maps/dir/-9.5523113,-35.7398717/Residencial+Recanto+dos+P%C3%A1ssaros,+R.+dos+Can%C3%A1rios,+128+-+Benedito+Bentes,+Macei%C3%B3+-+AL,+57084-136/@-9.5502067,-35.7409577,1235m/data=!3m1!1e3!4m8!4m7!1m0!1m5!1m1!1s0x70147005a7aa111:0x2e8136916a1e19e5!2m2!1d-35.7393356!2d-9.5479615?entry=ttu&g_ep=EgoyMDI2MDMwMi4wIKXMDSoASAFQAw%3D%3D" class="social-icon" title="Localização" target="_blank" rel="noopener">
+      <img src="https://raw.githubusercontent.com/Williamsrvs/img_encantosdoluar/refs/heads/main/map.png" alt="Localização" />
+    </a>
+    <a href="#" class="social-icon" title="Compartilhar">
+      <img src="https://raw.githubusercontent.com/Williamsrvs/img_encantosdoluar/refs/heads/main/compartilhar.png" alt="Compartilhar" />
+    </a>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <p>&copy; 2026 <span>Agulha e Linha</span>. Todos os direitos reservados.</p>
+  <p>Catálogo Digital - Desenvolvido por <span>Date Analytics</span> — Williams Rodrigues</p>
+  <p>Tel. (82) 98109-0042</p>
+</footer>
+
+<!-- FLOATING WA -->
+<a class="floating-wa" href="https://wa.me/5582996733252?text=Olá!%20Vim%20pelo%20site%20e%20gostaria%20de%20saber%20mais%20sobre%20os%20produtos." target="_blank" rel="noopener" title="Fale conosco no WhatsApp">
+  <svg viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+  </svg>
+</a>
+
+<script>
+// ── PETALS ──
+(function() {
+  const c = document.getElementById('petals');
+  const s = ['🧵','🧶','✨','💕','🪡','💗'];
+  for (let i = 0; i < 16; i++) {
+    const p = document.createElement('span');
+    p.className = 'petal';
+    p.textContent = s[i % s.length];
+    p.style.left = Math.random() * 100 + 'vw';
+    p.style.fontSize = (0.8 + Math.random() * 1) + 'rem';
+    p.style.animationDuration = (8 + Math.random() * 12) + 's';
+    p.style.animationDelay    = (Math.random() * 14) + 's';
+    c.appendChild(p);
+  }
+})();
+
+// ── CONFIG ──
+const API_URL   = 'api.php';
+const WA_NUMBER = '5582993464801';
+
+// ── WA LINK ──
+function buildWaLink(product) {
+  const preco = parseFloat(product.preco_atual).toFixed(2).replace('.', ',');
+  const msg = `Olá! 🌸 Vi o catálogo do site *Agulha e Linha* e me interessei por:\n\n`
+            + `*${product.descricao}*\n`
+            + `📂 Categoria: ${product.categoria}\n`
+            + `💰 Valor: R$ ${preco}\n\n`
+            + `Gostaria de mais informações! 😊`;
+  return `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
+}
+
+// ══════════════════════════════════════
+// LIGHTBOX
+// ══════════════════════════════════════
+let lbProducts = [];  // filtered list for navigation
+let lbIndex    = 0;
+
+const lb        = document.getElementById('lightbox');
+const lbImg     = document.getElementById('lbImg');
+const lbCat     = document.getElementById('lbCategory');
+const lbName    = document.getElementById('lbName');
+const lbObs     = document.getElementById('lbObs');
+const lbPrice   = document.getElementById('lbPrice');
+const lbPriceOl = document.getElementById('lbPriceOld');
+const lbWaLink  = document.getElementById('lbWaLink');
+const lbCounter = document.getElementById('lbCounter');
+
+function openLightbox(products, index) {
+  lbProducts = products;
+  lbIndex    = index;
+  fillLightbox();
+  lb.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+  lb.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function fillLightbox() {
+  const p = lbProducts[lbIndex];
+  if (!p) return;
+
+  // image
+  if (p.img_prod && p.img_prod.trim() !== '') {
+    lbImg.src = p.img_prod;
+    lbImg.alt = p.descricao;
+    lbImg.style.display = 'block';
+  } else {
+    lbImg.src = '';
+    lbImg.style.display = 'none';
+  }
+
+  // info
+  lbCat.textContent  = p.categoria;
+  lbName.textContent = p.descricao;
+  lbObs.textContent  = p.observacao || '';
+  lbObs.style.display = p.observacao ? 'block' : 'none';
+
+  const precoAt  = parseFloat(p.preco_atual);
+  const precoOri = parseFloat(p.preco_original);
+  const hasDisc  = precoOri > precoAt && precoAt > 0;
+
+  lbPrice.textContent  = `R$ ${precoAt.toFixed(2).replace('.', ',')}`;
+  if (hasDisc) {
+    lbPriceOl.textContent = `R$ ${precoOri.toFixed(2).replace('.', ',')}`;
+    lbPriceOl.style.display = 'inline';
+  } else {
+    lbPriceOl.textContent = '';
+    lbPriceOl.style.display = 'none';
+  }
+
+  lbWaLink.href = buildWaLink(p);
+
+  // counter
+  lbCounter.textContent = `${lbIndex + 1} / ${lbProducts.length}`;
+
+  // nav arrows visibility
+  document.getElementById('lbPrev').style.visibility = lbIndex === 0 ? 'hidden' : 'visible';
+  document.getElementById('lbNext').style.visibility = lbIndex === lbProducts.length - 1 ? 'hidden' : 'visible';
+}
+
+// close triggers
+document.getElementById('lbClose').addEventListener('click', closeLightbox);
+document.getElementById('lbCloseBottom').addEventListener('click', closeLightbox);
+lb.addEventListener('click', e => { if (e.target === lb) closeLightbox(); });
+
+// arrow nav
+document.getElementById('lbPrev').addEventListener('click', () => {
+  if (lbIndex > 0) { lbIndex--; fillLightbox(); }
+});
+document.getElementById('lbNext').addEventListener('click', () => {
+  if (lbIndex < lbProducts.length - 1) { lbIndex++; fillLightbox(); }
+});
+
+// keyboard nav
+document.addEventListener('keydown', e => {
+  if (!lb.classList.contains('open')) return;
+  if (e.key === 'Escape') closeLightbox();
+  if (e.key === 'ArrowLeft'  && lbIndex > 0) { lbIndex--; fillLightbox(); }
+  if (e.key === 'ArrowRight' && lbIndex < lbProducts.length - 1) { lbIndex++; fillLightbox(); }
+});
+
+// touch swipe
+let tsX = null;
+lb.addEventListener('touchstart', e => { tsX = e.touches[0].clientX; }, { passive: true });
+lb.addEventListener('touchend', e => {
+  if (tsX === null) return;
+  const dx = e.changedTouches[0].clientX - tsX;
+  tsX = null;
+  if (Math.abs(dx) < 40) return;
+  if (dx < 0 && lbIndex < lbProducts.length - 1) { lbIndex++; fillLightbox(); }
+  if (dx > 0 && lbIndex > 0)                     { lbIndex--; fillLightbox(); }
+});
+
+// ══════════════════════════════════════
+// RENDER CARD
+// ══════════════════════════════════════
+function renderCard(p, delay, products, index) {
+  const hasImg     = p.img_prod && p.img_prod.trim() !== '';
+  const precoAt    = parseFloat(p.preco_atual);
+  const precoOri   = parseFloat(p.preco_original);
+  const hasDisc    = precoOri > precoAt && precoAt > 0;
+  const discPct    = hasDisc ? Math.round((1 - precoAt / precoOri) * 100) : 0;
+  const precoFmt   = `R$ ${precoAt.toFixed(2).replace('.', ',')}`;
+  const precoOriFmt= `R$ ${precoOri.toFixed(2).replace('.', ',')}`;
+  const waLink     = buildWaLink(p);
+
+  const discBadge = hasDisc ? `<div class="product-discount">-${discPct}%</div>` : '';
+  const oldPrice  = hasDisc ? `<span class="product-price-old">${precoOriFmt}</span>` : '';
+  const obs       = p.observacao ? `<p class="product-obs">${p.observacao}</p>` : '';
+
+  const imgHtml = hasImg
+    ? `<img src="${p.img_prod}" alt="${p.descricao}" loading="lazy"
+           onerror="this.parentElement.innerHTML='<div class=\\'product-no-img\\'><span>🌸</span>Sem foto</div>'" />`
+    : `<div class="product-no-img"><span>🌸</span>Sem foto</div>`;
+
+  const card = document.createElement('div');
+  card.className = 'product-card';
+  card.style.animationDelay = delay + 'ms';
+  card.dataset.cat = p.categoria;
+
+  card.innerHTML = `
+    <div class="product-img-wrap" role="button" tabindex="0" aria-label="Ampliar imagem de ${p.descricao}" title="Clique para ampliar">
+      ${imgHtml}
+      <div class="product-badge">${p.categoria}</div>
+      ${discBadge}
+      <div class="zoom-hint">
+        <div class="zoom-hint-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#C81255" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="7"/>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            <line x1="11" y1="8" x2="11" y2="14"/>
+            <line x1="8" y1="11" x2="14" y2="11"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+    <div class="product-body">
+      <div class="product-category">${p.categoria}</div>
+      <h3 class="product-name">${p.descricao}</h3>
+      ${obs}
+      <div class="product-pricing">
+        ${oldPrice}
+        <span class="product-price-new">${precoFmt}</span>
+      </div>
+      <a class="btn-whatsapp" href="${waLink}" target="_blank" rel="noopener">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+        </svg>
+        Quero esse! Chamar no WhatsApp
+      </a>
+    </div>
+  `;
+
+  // open lightbox on image click (only if has image)
+  if (hasImg) {
+    const imgWrap = card.querySelector('.product-img-wrap');
+    imgWrap.addEventListener('click', () => openLightbox(products, index));
+    imgWrap.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openLightbox(products, index); }
+    });
+  }
+
+  return card;
+}
+
+// ── CATALOG ──
+let allProducts  = [];
+let activeFilter = 'todos';
+
+async function loadCatalog() {
+  try {
+    const res  = await fetch(`${API_URL}?action=list`);
+    const data = await res.json();
+    allProducts = data.success ? data.products : [];
+  } catch { allProducts = []; }
+  buildFilters();
+  renderCatalog();
+}
+
+function buildFilters() {
+  const bar  = document.getElementById('filterBar');
+  const cats = [...new Set(allProducts.map(p => p.categoria))];
+  bar.querySelectorAll('.filter-pill:not([data-cat="todos"])').forEach(e => e.remove());
+  cats.forEach(cat => {
+    const btn = document.createElement('button');
+    btn.className  = 'filter-pill';
+    btn.dataset.cat = cat;
+    btn.textContent = cat;
+    btn.addEventListener('click', () => setFilter(cat));
+    bar.appendChild(btn);
+  });
+}
+
+function setFilter(cat) {
+  activeFilter = cat;
+  document.querySelectorAll('.filter-pill').forEach(p => p.classList.toggle('active', p.dataset.cat === cat));
+  renderCatalog();
+}
+
+document.getElementById('filterBar').addEventListener('click', e => {
+  const pill = e.target.closest('.filter-pill');
+  if (pill) setFilter(pill.dataset.cat);
+});
+
+function renderCatalog() {
+  const grid = document.getElementById('productsGrid');
+  grid.innerHTML = '';
+  const filtered = activeFilter === 'todos' ? allProducts : allProducts.filter(p => p.categoria === activeFilter);
+
+  if (!filtered.length) {
+    grid.innerHTML = `
+      <div class="catalog-empty">
+        <div class="catalog-empty-icon">🧶</div>
+        <h3>Nenhum produto encontrado</h3>
+        <p>${allProducts.length === 0 ? 'Em breve novidades incríveis chegando aqui!' : 'Tente outro filtro ou volte em breve!'}</p>
+      </div>`;
+    return;
+  }
+
+  filtered.forEach((p, i) => {
+    grid.appendChild(renderCard(p, i * 60, filtered, i));
+  });
+}
+
+loadCatalog();
+</script>
+</body>
+</html>

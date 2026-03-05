@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧶 Agulha e Linha— Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --rose:    #FF69B4;
+            --deep:    #C81255;
+            --blush:   #FFD6E8;
+            --petal:   #FFF0F7;
+            --magenta: #FF1493;
+            --cream:   #FFF8FC;
+            --shadow:  rgba(200, 18, 85, 0.18);
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #FD9AEB 0%, #C81255 40%, #B70490 70%, #DD55C4 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        /* Floating petals background */
+        .petals {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .petal {
+            position: absolute;
+            font-size: 1.4rem;
+            opacity: 0.25;
+            animation: fall linear infinite;
+        }
+        @keyframes fall {
+            0%   { transform: translateY(-60px) rotate(0deg); opacity: 0; }
+            10%  { opacity: 0.3; }
+            90%  { opacity: 0.2; }
+            100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* Card */
+        .card {
+            position: relative;
+            z-index: 1;
+            background: var(--cream);
+            border-radius: 32px;
+            padding: 50px 44px 44px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow:
+                0 4px 6px var(--shadow),
+                0 20px 60px rgba(183, 4, 144, 0.28),
+                0 0 0 1px rgba(255,255,255,0.6) inset;
+            animation: cardIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+        @keyframes cardIn {
+            from { opacity: 0; transform: translateY(40px) scale(0.96); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* Logo */
+        .logo-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+        .logo-ring {
+            border-radius: 50%;
+            border: 3px solid var(--rose);
+            padding: 6px;
+            background: var(--blush);
+            box-shadow: 0 0 0 6px rgba(255, 105, 180, 0.12);
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            animation: logoFade 1s ease both;
+        }
+        .logo-ring:hover {
+            transform: scale(1.06) rotate(4deg);
+            box-shadow: 0 0 0 10px rgba(255, 20, 147, 0.15);
+        }
+        @keyframes logoFade {
+            from { opacity: 0; transform: scale(0.8); }
+            to   { opacity: 1; transform: scale(1); }
+        }
+        .logo-ring img {
+            display: block;
+            border-radius: 50%;
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+        }
+
+        .brand-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.55rem;
+            font-weight: 600;
+            color: var(--deep);
+            margin-top: 14px;
+            letter-spacing: 0.04em;
+        }
+        .brand-sub {
+            font-size: 0.8rem;
+            font-weight: 400;
+            color: var(--rose);
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        /* Divider */
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 28px;
+        }
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--rose));
+        }
+        .divider::after { background: linear-gradient(to left, transparent, var(--rose)); }
+        .divider span { font-size: 0.7rem; color: var(--rose); letter-spacing: 0.15em; text-transform: uppercase; white-space: nowrap; }
+
+        /* Input group */
+        .input-group {
+            position: relative;
+            margin-bottom: 18px;
+        }
+        .input-group label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--deep);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+        .input-group .icon {
+            position: absolute;
+            left: 14px;
+            bottom: 12px;
+            font-size: 1rem;
+            pointer-events: none;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 12px 14px 12px 42px;
+            border: 2px solid var(--blush);
+            border-radius: 14px;
+            background: var(--petal);
+            font-family: 'Nunito', sans-serif;
+            font-size: 0.95rem;
+            color: #333;
+            transition: border-color 0.25s, box-shadow 0.25s;
+            outline: none;
+        }
+        .input-group input::placeholder { color: #c8a0b8; }
+        .input-group input:focus {
+            border-color: var(--rose);
+            box-shadow: 0 0 0 4px rgba(255, 105, 180, 0.15);
+            background: #fff;
+        }
+
+        /* Eye toggle */
+        .eye-btn {
+            position: absolute;
+            right: 14px;
+            bottom: 12px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            color: var(--rose);
+            padding: 0;
+            line-height: 1;
+        }
+
+        /* Button */
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--rose), var(--magenta));
+            color: #fff;
+            border: none;
+            border-radius: 14px;
+            font-family: 'Nunito', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            margin-top: 8px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 6px 20px rgba(255, 20, 147, 0.35);
+        }
+        .btn-login::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(255,255,255,0.12);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .btn-login:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(255, 20, 147, 0.45); }
+        .btn-login:hover::after { opacity: 1; }
+        .btn-login:active { transform: translateY(0); }
+
+        /* Success overlay */
+        .success-overlay {
+            display: none;
+            position: absolute;
+            inset: 0;
+            border-radius: 32px;
+            background: linear-gradient(135deg, rgba(255,240,247,0.97), rgba(255,214,232,0.97));
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            animation: successIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+            z-index: 10;
+        }
+        .success-overlay.show { display: flex; }
+        @keyframes successIn {
+            from { opacity: 0; transform: scale(0.92); }
+            to   { opacity: 1; transform: scale(1); }
+        }
+        .success-icon {
+            font-size: 3.5rem;
+            animation: pop 0.5s 0.15s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+        @keyframes pop {
+            from { transform: scale(0); }
+            to   { transform: scale(1); }
+        }
+        .success-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.7rem;
+            font-weight: 600;
+            color: var(--deep);
+        }
+        .success-msg {
+            font-size: 0.9rem;
+            color: var(--rose);
+            text-align: center;
+            max-width: 260px;
+            line-height: 1.5;
+        }
+        .success-bar {
+            width: 180px;
+            height: 4px;
+            background: var(--blush);
+            border-radius: 99px;
+            overflow: hidden;
+            margin-top: 6px;
+        }
+        .success-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--rose), var(--magenta));
+            border-radius: 99px;
+            animation: fillBar 2.5s 0.3s ease forwards;
+        }
+        @keyframes fillBar { to { width: 100%; } }
+
+        /* Error shake */
+        @keyframes shake {
+            0%,100% { transform: translateX(0); }
+            20%,60% { transform: translateX(-8px); }
+            40%,80% { transform: translateX(8px); }
+        }
+        .shake { animation: shake 0.4s ease; }
+
+        .footer-note {
+            text-align: center;
+            margin-top: 22px;
+            font-size: 0.75rem;
+            color: #c0a0b0;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Floating petals -->
+<div class="petals" id="petals"></div>
+
+<div class="card" id="card">
+
+    <!-- Success overlay -->
+    <div class="success-overlay" id="successOverlay">
+        <div class="success-icon">🧶</div>
+        <div class="success-title">Bem-vinda!</div>
+        <div class="success-msg">Login realizado com sucesso.<br>Prepare-se para encantos especiais! ✨</div>
+        <div class="success-bar"><div class="success-bar-fill"></div></div>
+    </div>
+
+    <!-- Logo -->
+    <div class="logo-wrap">
+        <div class="logo-ring">
+            <img src="https://raw.githubusercontent.com/Williamsrvs/projeto_encantosdoluar/refs/heads/main/img/logo%202.png" alt="Encantos do Luar">
+        </div>
+        <div class="brand-title">Agulha e Linha</div>
+        <div class="brand-sub">💖 Sua loja especial</div>
+    </div>
+
+    <div class="divider"><span>Acesse sua conta</span></div>
+
+    <!-- Form -->
+    <div class="input-group">
+        <label for="usuario">Usuário</label>
+        <span class="icon">👤</span>
+        <input id="usuario" type="text" placeholder="Digite seu nome de usuário" autocomplete="username">
+    </div>
+
+    <div class="input-group">
+        <label for="senha">Senha</label>
+        <span class="icon">🔒</span>
+        <input id="senha" type="password" placeholder="Digite sua senha" autocomplete="current-password">
+        <button class="eye-btn" type="button" id="eyeBtn" aria-label="Mostrar senha">👁️</button>
+    </div>
+
+    <button class="btn-login" id="btnLogin">✨ Entrar</button>
+
+    <div class="footer-note">🌸 Agulha e Linha&copy; 2025</div>
+</div>
+
+<script>
+    // Floating petals
+    const petalEl = document.getElementById('petals');
+    const symbols = ['🌸','🧵','✨','💕','🧶','💗'];
+    for (let i = 0; i < 18; i++) {
+        const p = document.createElement('span');
+        p.className = 'petal';
+        p.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+        p.style.left = Math.random() * 100 + 'vw';
+        p.style.fontSize = (0.8 + Math.random() * 1.2) + 'rem';
+        p.style.animationDuration = (6 + Math.random() * 10) + 's';
+        p.style.animationDelay = (Math.random() * 10) + 's';
+        petalEl.appendChild(p);
+    }
+
+    // Eye toggle
+    const eyeBtn = document.getElementById('eyeBtn');
+    const senhaInput = document.getElementById('senha');
+    eyeBtn.addEventListener('click', () => {
+        const isPass = senhaInput.type === 'password';
+        senhaInput.type = isPass ? 'text' : 'password';
+        eyeBtn.textContent = isPass ? '🙈' : '👁️';
+    });
+
+    // Credenciais
+    const VALID_USER = 'agulhaelinha';
+    const VALID_PASS = 'agulhaelinha@2026';
+
+    document.getElementById('btnLogin').addEventListener('click', () => {
+        const user = document.getElementById('usuario').value.trim();
+        const pass = document.getElementById('senha').value.trim();
+
+        if (!user || !pass) {
+            shakeCard();
+            return;
+        }
+
+        if (user === VALID_USER && pass === VALID_PASS) {
+            // Salva sessão
+            sessionStorage.setItem('agulhaelinha_session', 'authenticated');
+            // Mostra overlay de sucesso e redireciona após 2.2s
+            document.getElementById('successOverlay').classList.add('show');
+            setTimeout(() => {
+                window.location.href = 'cad_prod.html';
+            }, 2200);
+        } else {
+            shakeCard();
+        }
+    });
+
+    // Allow Enter key
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Enter') document.getElementById('btnLogin').click();
+    });
+
+    function shakeCard() {
+        const card = document.getElementById('card');
+        card.classList.remove('shake');
+        void card.offsetWidth;
+        card.classList.add('shake');
+    }
+</script>
+</body>
+</html>
