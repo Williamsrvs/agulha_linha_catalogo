@@ -7,14 +7,14 @@ CREATE TABLE u799109175_agulhaelinha.tbl_produtos (
     descricao VARCHAR(255) NOT NULL,
 
     categoria ENUM(
-        'Aniversarios',
-        'Buquê Noiva',
-        'Dia das Mães',
-        'Dia Namorados',
-        'Lembrancinhas Corporativas',
-        'Datas Especiais',
-        'Românticas',
-        'Cestas Personalizadas'
+        'Maternidade e Bebê',
+        'Casa e Decoração',
+        'Moda',
+        'Vestuários Infantil',
+        'Vestuário Adulto',
+        'Personalizados',
+        'Moda Praia',
+        'Acessorios'
     ) NOT NULL,
 
     img_prod VARCHAR(255), -- URL ou caminho da imagem
